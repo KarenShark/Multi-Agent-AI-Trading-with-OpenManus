@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "src/index.ts",
   "devDependencies": {
+    "@types/jsdom": "^21.1.7",
     "@types/node": "^22.10.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2"
@@ -10,7 +11,9 @@
   "dependencies": {
     "@visactor/vchart": "^1.13.7",
     "@visactor/vmind": "2.0.5",
+    "canvas": "^3.1.2",
     "get-stdin": "^9.0.0",
+    "jsdom": "^26.1.0",
     "puppeteer": "^24.9.0"
   },
   "scripts": {

@@ -1,3 +1,10 @@
+// 设置 jsdom 环境来模拟浏览器 - 必须在其他导入之前
+import { JSDOM } from "jsdom";
+const dom = new JSDOM("<!DOCTYPE html><html><body></body></html>");
+(global as any).document = dom.window.document;
+(global as any).window = dom.window;
+// 不设置 navigator，因为它有 getter
+
 import path from "path";
 import fs from "fs";
 import puppeteer from "puppeteer";
