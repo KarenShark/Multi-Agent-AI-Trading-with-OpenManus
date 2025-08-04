@@ -1,9 +1,15 @@
 """Collection classes for managing multiple tools."""
+
 from typing import Any, Dict, List
 
 from app.exceptions import ToolError
 from app.logger import logger
 from app.tool.base import BaseTool, ToolFailure, ToolResult
+from app.tool.indicators import TechnicalIndicators
+from app.tool.news_sentiment_fetcher import NewsSentimentFetcher
+
+# Import financial tools
+from app.tool.yfinance_fetcher import YFinanceFetcher
 
 
 class ToolCollection:
@@ -69,3 +75,10 @@ class ToolCollection:
         for tool in tools:
             self.add_tool(tool)
         return self
+
+
+def create_financial_tool_collection() -> ToolCollection:
+    """Create a collection of financial analysis tools."""
+    return ToolCollection(
+        YFinanceFetcher(), TechnicalIndicators(), NewsSentimentFetcher()
+    )
