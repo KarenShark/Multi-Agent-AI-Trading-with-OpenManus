@@ -56,6 +56,31 @@ class TechnicalIndicators(BaseTool):
                 "description": "Signal period for MACD",
                 "default": 9,
             },
+            "bb_period": {
+                "type": "integer",
+                "description": "Period for Bollinger Bands",
+                "default": 20,
+            },
+            "bb_std": {
+                "type": "number",
+                "description": "Standard deviation multiplier for Bollinger Bands",
+                "default": 2.0,
+            },
+            "stoch_k": {
+                "type": "integer",
+                "description": "K period for Stochastic Oscillator",
+                "default": 14,
+            },
+            "stoch_d": {
+                "type": "integer",
+                "description": "D period for Stochastic Oscillator",
+                "default": 3,
+            },
+            "williams_r": {
+                "type": "integer",
+                "description": "Period for Williams %R",
+                "default": 14,
+            },
         },
         "required": ["prices"],
     }
@@ -63,6 +88,8 @@ class TechnicalIndicators(BaseTool):
     def execute(
         self,
         prices: List[float],
+        high_prices: List[float] = None,
+        low_prices: List[float] = None,
         indicators: List[str] = None,
         sma_period: int = 20,
         ema_period: int = 20,
@@ -70,12 +97,19 @@ class TechnicalIndicators(BaseTool):
         macd_fast: int = 12,
         macd_slow: int = 26,
         macd_signal: int = 9,
+        bb_period: int = 20,
+        bb_std: float = 2.0,
+        stoch_k: int = 14,
+        stoch_d: int = 3,
+        williams_r: int = 14,
     ) -> Dict:
         """
         Calculate technical indicators for given price data
 
         Args:
-            prices: List of price values
+            prices: List of close price values
+            high_prices: List of high price values (for stochastic, Williams %R)
+            low_prices: List of low price values (for stochastic, Williams %R)
             indicators: List of indicators to calculate
             Various period parameters for different indicators
 
@@ -85,9 +119,19 @@ class TechnicalIndicators(BaseTool):
         if indicators is None:
             indicators = ["sma", "rsi", "macd"]
 
-        if len(prices) < max(sma_period, ema_period, rsi_period, macd_slow):
+        # Check if we have enough data for the most demanding indicator
+        min_required = max(
+            sma_period,
+            ema_period,
+            rsi_period,
+            macd_slow,
+            bb_period,
+            stoch_k,
+            williams_r,
+        )
+        if len(prices) < min_required:
             return {
-                "error": "Insufficient price data for calculations",
+                "error": f"Insufficient price data for calculations (need {min_required}, got {len(prices)})",
                 "success": False,
             }
 
@@ -95,6 +139,10 @@ class TechnicalIndicators(BaseTool):
 
         try:
             df = pd.DataFrame({"close": prices})
+            if high_prices:
+                df["high"] = high_prices
+            if low_prices:
+                df["low"] = low_prices
 
             # Simple Moving Average
             if "sma" in indicators:
@@ -121,12 +169,47 @@ class TechnicalIndicators(BaseTool):
 
             # Bollinger Bands
             if "bollinger" in indicators:
-                bb_data = self._calculate_bollinger_bands(df["close"], sma_period)
+                bb_data = self._calculate_bollinger_bands(
+                    df["close"], bb_period, bb_std
+                )
                 result["bollinger"] = {
                     "upper": bb_data["upper"].tolist(),
                     "middle": bb_data["middle"].tolist(),
                     "lower": bb_data["lower"].tolist(),
                 }
+
+            # Stochastic Oscillator
+            if (
+                "stochastic" in indicators
+                and "high" in df.columns
+                and "low" in df.columns
+            ):
+                stoch_data = self._calculate_stochastic(
+                    df["high"], df["low"], df["close"], stoch_k, stoch_d
+                )
+                result["stochastic"] = {
+                    "k": stoch_data["k"].tolist(),
+                    "d": stoch_data["d"].tolist(),
+                }
+
+            # Williams %R
+            if (
+                "williams_r" in indicators
+                and "high" in df.columns
+                and "low" in df.columns
+            ):
+                williams_data = self._calculate_williams_r(
+                    df["high"], df["low"], df["close"], williams_r
+                )
+                result["williams_r"] = williams_data.tolist()
+
+            # MACD Signal Analysis (enhanced)
+            if "macd_signals" in indicators:
+                macd_data = self._calculate_macd(
+                    df["close"], macd_fast, macd_slow, macd_signal
+                )
+                signals = self._analyze_macd_signals(macd_data)
+                result["macd_signals"] = signals
 
         except Exception as e:
             return {
@@ -158,7 +241,7 @@ class TechnicalIndicators(BaseTool):
         return {"macd": macd, "signal": signal_line, "histogram": histogram}
 
     def _calculate_bollinger_bands(
-        self, prices: pd.Series, period: int = 20, std_dev: int = 2
+        self, prices: pd.Series, period: int = 20, std_dev: float = 2.0
     ) -> Dict:
         """Calculate Bollinger Bands"""
         sma = prices.rolling(window=period).mean()
@@ -168,4 +251,75 @@ class TechnicalIndicators(BaseTool):
             "upper": sma + (std * std_dev),
             "middle": sma,
             "lower": sma - (std * std_dev),
+        }
+
+    def _calculate_stochastic(
+        self,
+        high: pd.Series,
+        low: pd.Series,
+        close: pd.Series,
+        k_period: int = 14,
+        d_period: int = 3,
+    ) -> Dict:
+        """Calculate Stochastic Oscillator"""
+        lowest_low = low.rolling(window=k_period).min()
+        highest_high = high.rolling(window=k_period).max()
+
+        k_percent = 100 * ((close - lowest_low) / (highest_high - lowest_low))
+        d_percent = k_percent.rolling(window=d_period).mean()
+
+        return {
+            "k": k_percent,
+            "d": d_percent,
+        }
+
+    def _calculate_williams_r(
+        self, high: pd.Series, low: pd.Series, close: pd.Series, period: int = 14
+    ) -> pd.Series:
+        """Calculate Williams %R"""
+        highest_high = high.rolling(window=period).max()
+        lowest_low = low.rolling(window=period).min()
+
+        williams_r = -100 * ((highest_high - close) / (highest_high - lowest_low))
+        return williams_r
+
+    def _analyze_macd_signals(self, macd_data: Dict) -> Dict:
+        """Analyze MACD for trading signals"""
+        macd = macd_data["macd"]
+        signal = macd_data["signal"]
+        histogram = macd_data["histogram"]
+
+        # Generate trading signals
+        signals = []
+        for i in range(1, len(macd)):
+            if pd.isna(macd.iloc[i]) or pd.isna(signal.iloc[i]):
+                signals.append("neutral")
+                continue
+
+            # Bullish signal: MACD crosses above signal line
+            if macd.iloc[i] > signal.iloc[i] and macd.iloc[i - 1] <= signal.iloc[i - 1]:
+                signals.append("bullish_crossover")
+            # Bearish signal: MACD crosses below signal line
+            elif (
+                macd.iloc[i] < signal.iloc[i] and macd.iloc[i - 1] >= signal.iloc[i - 1]
+            ):
+                signals.append("bearish_crossover")
+            # Bullish divergence: histogram increasing
+            elif histogram.iloc[i] > histogram.iloc[i - 1]:
+                signals.append("bullish_momentum")
+            # Bearish divergence: histogram decreasing
+            elif histogram.iloc[i] < histogram.iloc[i - 1]:
+                signals.append("bearish_momentum")
+            else:
+                signals.append("neutral")
+
+        # Add first signal as neutral
+        signals.insert(0, "neutral")
+
+        return {
+            "signals": signals,
+            "latest_signal": signals[-1] if signals else "neutral",
+            "signal_strength": (
+                abs(histogram.iloc[-1]) if not pd.isna(histogram.iloc[-1]) else 0
+            ),
         }

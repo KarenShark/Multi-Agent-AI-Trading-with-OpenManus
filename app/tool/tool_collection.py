@@ -79,6 +79,11 @@ class ToolCollection:
 
 def create_financial_tool_collection() -> ToolCollection:
     """Create a collection of financial analysis tools."""
+    from app.tool.newsapi_fetcher import NewsAPIFetcher
+
     return ToolCollection(
-        YFinanceFetcher(), TechnicalIndicators(), NewsSentimentFetcher()
+        YFinanceFetcher(),
+        TechnicalIndicators(),
+        NewsSentimentFetcher(),  # Legacy sentiment tool
+        NewsAPIFetcher(),  # Enhanced news API
     )

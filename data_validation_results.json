@@ -1,0 +1,142 @@
+{
+  "timestamp": "2025-08-05T19:53:01.084808",
+  "overall_status": "poor",
+  "data_sources": {
+    "connectivity": {
+      "yfinance": {
+        "status": "success",
+        "response_time": 6.261159896850586,
+        "data_points": 3,
+        "error": null
+      },
+      "fundamental": {
+        "status": "success",
+        "response_time": 1.9572679996490479,
+        "metrics_count": 0,
+        "error": null
+      },
+      "news": {
+        "status": "success",
+        "response_time": 0.5397219657897949,
+        "articles_count": 3,
+        "error": null
+      },
+      "macro": {
+        "status": "success",
+        "response_time": 1.5854690074920654,
+        "indicators_count": 8,
+        "error": null
+      }
+    },
+    "quality": {
+      "fundamental": {
+        "completeness": 0.0,
+        "accuracy": 0.0,
+        "consistency": 0.9,
+        "timeliness": 0.8,
+        "total_metrics": 12,
+        "valid_metrics": 0,
+        "issues": []
+      },
+      "technical": {
+        "completeness": 0,
+        "accuracy": 0.95,
+        "consistency": 0.9,
+        "timeliness": 0.95,
+        "variance_quality": 0.5,
+        "total_points": 0,
+        "valid_points": 0,
+        "issues": []
+      },
+      "sentiment": {
+        "completeness": 0.33333333333333337,
+        "accuracy": 0.8000000000000002,
+        "consistency": 0.6999999999999998,
+        "timeliness": 0.9,
+        "avg_articles": 3.3333333333333335,
+        "avg_relevance": 0.8000000000000002,
+        "issues": []
+      },
+      "macro": {
+        "completeness": 1.0,
+        "accuracy": 0,
+        "consistency": 0.85,
+        "timeliness": 0.75,
+        "total_indicators": 56,
+        "category_coverage": 1.0,
+        "issues": []
+      }
+    },
+    "consistency": {
+      "timestamp_consistency": {
+        "issues": [],
+        "consistent": true
+      }
+    },
+    "performance": {
+      "comprehensive_load": {
+        "load_time": 14.843020915985107,
+        "stocks_count": 3,
+        "time_per_stock": 4.947673638661702,
+        "success": false
+      },
+      "preprocessing": {
+        "error": "DataPreprocessor.create_unified_dataset() got an unexpected keyword argument 'fundamental_data'"
+      }
+    },
+    "completeness": {
+      "stock_coverage": {
+        "ratio": 1.0,
+        "total_tested": 5,
+        "successful": 5,
+        "meets_standard": true
+      },
+      "field_completeness": {
+        "error": "0"
+      }
+    },
+    "freshness": {
+      "technical": {
+        "error": "缺少时间戳",
+        "is_fresh": false
+      },
+      "fundamental": {
+        "error": "缺少时间戳",
+        "is_fresh": false
+      },
+      "news": {
+        "timestamp": "2025-08-05T19:54:34.929994",
+        "age_hours": -0.0014063061111111112,
+        "age_days": -5.859608796296296e-05,
+        "is_fresh": true,
+        "max_age_days": 7
+      },
+      "macro": {
+        "error": "缺少时间戳",
+        "is_fresh": false
+      }
+    },
+    "anomalies": {
+      "price_anomalies": [],
+      "value_anomalies": []
+    }
+  },
+  "quality_metrics": {},
+  "issues_found": [
+    "fundamental数据完整性不足: 0.00%",
+    "technical数据完整性不足: 0.00%",
+    "sentiment数据完整性不足: 33.33%"
+  ],
+  "recommendations": [
+    "提升数据质量标准",
+    "增加数据更新频率"
+  ],
+  "overall_score": 0.6100000000000001,
+  "status_description": "较差",
+  "quality_breakdown": {
+    "connectivity": 1.0,
+    "quality": 0.33333333333333337,
+    "consistency": 0.8,
+    "freshness": 0.25
+  }
+}

@@ -1,0 +1,128 @@
+{
+  "timestamp": "2025-08-05T20:13:00.290721",
+  "sentiment_quality": {
+    "article_counts": [
+      15,
+      15,
+      15,
+      15,
+      15
+    ],
+    "relevance_scores": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "quality_scores": [
+      0.8533333333333334,
+      0.8533333333333334,
+      0.8533333333333334,
+      0.8533333333333334,
+      0.8533333333333334
+    ],
+    "diversity_scores": [
+      0.6,
+      0.6,
+      0.6,
+      0.6,
+      0.6
+    ],
+    "keyword_richness": [
+      11,
+      11,
+      11,
+      11,
+      11
+    ],
+    "overall_quality": 0.8533333333333333,
+    "avg_articles": 15.0,
+    "avg_relevance": 1.0,
+    "avg_diversity": 0.6,
+    "avg_keywords": 11.0
+  },
+  "macro_quality": {
+    "indicator_counts": {
+      "interest_rates": {
+        "total": 10,
+        "valid": 10,
+        "completeness": 1.0
+      },
+      "inflation": {
+        "total": 10,
+        "valid": 10,
+        "completeness": 1.0
+      },
+      "employment": {
+        "total": 8,
+        "valid": 8,
+        "completeness": 1.0
+      },
+      "growth": {
+        "total": 11,
+        "valid": 11,
+        "completeness": 1.0
+      },
+      "market_sentiment": {
+        "total": 5,
+        "valid": 5,
+        "completeness": 1.0
+      },
+      "derived_indicators": {
+        "total": 3,
+        "valid": 3,
+        "completeness": 1.0
+      },
+      "analysis": {
+        "total": 6,
+        "valid": 6,
+        "completeness": 1.0
+      },
+      "outlook": {
+        "total": 3,
+        "valid": 3,
+        "completeness": 1.0
+      }
+    },
+    "category_coverage": {
+      "interest_rates": 1.0,
+      "inflation": 1.0,
+      "employment": 1.0,
+      "growth": 1.0,
+      "market_sentiment": 1.0,
+      "derived_indicators": 1.0,
+      "analysis": 1.0,
+      "outlook": 1.0
+    },
+    "quality_score": 1.0,
+    "data_completeness": 1.0,
+    "coverage_bonus": 1.0
+  },
+  "overall_assessment": {
+    "sentiment_quality": 0.8533333333333333,
+    "sentiment_grade": "良好 (B)",
+    "macro_quality": 1.0,
+    "macro_grade": "优秀 (A)",
+    "overall_score": 0.9413333333333334,
+    "overall_grade": "优秀 (A)",
+    "improvement_analysis": {
+      "sentiment_improvements": [
+        "新闻数量达到理想水平 (12+篇)",
+        "相关性评分优秀 (90%+)",
+        "整体情感数据质量达标"
+      ],
+      "macro_improvements": [
+        "宏观数据质量评分优秀",
+        "主要经济类别覆盖全面"
+      ],
+      "key_achievements": [
+        "情感面数据质量显著提升",
+        "宏观面数据质量持续改善"
+      ]
+    },
+    "recommendations": [
+      "数据质量已达到良好水平，继续保持"
+    ]
+  }
+}
